@@ -30,16 +30,20 @@ The application should now be running locally, and you can access it in your web
 
 ## Edit bulk feature details
 
-### folder structure 
+Folder Structure Conventions
+============================
 
- . 
-├── public/          # Public assets and HTML template
-├── src/             # Source code
-│   ├── components/  # React components
-│   ├── redux/       # Redux-related files
-│   ├── styles/      # Stylesheets
-│   └── App.js       # Main application component
-└── README.md        # Project documentation
+> Folder structure options and naming conventions for software projects
+
+### A typical top-level directory layout
+    .
+    ├── public/          # Public assets and HTML template
+    ├── src/             # Source code
+    │   ├── components/  # React components
+    │   ├── redux/       # Redux-related files
+    │   ├── styles/      # Stylesheets
+    │   └── App.js       # Main application component
+    └── README.md        # Project documentation
 
 
 ### How to Use
