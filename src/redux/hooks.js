@@ -12,11 +12,23 @@ export const useInvoiceListData = () => {
     );
   };
 
+  const getSelectedInvoices = async (receivedIds) => {
+    const selectedInvoice = [];
+
+    for (const id of receivedIds) {
+      const newInvoice = await getOneInvoice(id);
+      selectedInvoice.push(newInvoice);
+    }
+
+    return selectedInvoice;
+  };
+
   const listSize = invoiceList.length;
 
   return {
     invoiceList,
     getOneInvoice,
     listSize,
+    getSelectedInvoices
   };
 };

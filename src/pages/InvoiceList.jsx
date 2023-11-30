@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, Col, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Row, Table, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { BiSolidPencil, BiTrash } from "react-icons/bi";
 import { BsEyeFill } from "react-icons/bs";
@@ -13,6 +13,22 @@ const InvoiceList = () => {
   const { invoiceList, getOneInvoice } = useInvoiceListData();
   const isListEmpty = invoiceList.length === 0;
   const [copyId, setCopyId] = useState("");
+  const [ids, setIds] = useState([]);
+  const [multipleUpdate, setMultipleUpdated] = useState(false);
+
+  const multipleInvoice = (id) => {
+    setIds((prevIds) => {
+      const idIndex = prevIds.indexOf(id);
+
+      if (idIndex === -1) {
+        return [...prevIds, id];
+      } else {
+        const updatedIds = [...prevIds];
+        updatedIds.splice(idIndex, 1);
+        return updatedIds;
+      }
+    });
+  };
   const navigate = useNavigate();
   const handleCopyClick = () => {
     const invoice = getOneInvoice(copyId);
@@ -21,6 +37,14 @@ const InvoiceList = () => {
     } else {
       navigate(`/create/${copyId}`);
     }
+  };
+
+  const handleBlukUpdate = () => {
+    navigate(`/bulkEdit`, {
+      state: {
+        ids,
+      },
+    });
   };
 
   return (
@@ -42,6 +66,21 @@ const InvoiceList = () => {
                 <Link to="/create">
                   <Button variant="primary mb-2 mb-md-4">Create Invoice</Button>
                 </Link>
+                {ids.length > 0 ? (
+                  <Button
+                    variant="success mb-2 mb-md-4"
+                    onClick={handleBlukUpdate}
+                  >
+                    Update Multiple
+                  </Button>
+                ) : (
+                  <Button
+                    variant="danger mb-2 mb-md-4"
+                    onClick={() => setMultipleUpdated(!multipleUpdate)}
+                  >
+                    Edit bulk
+                  </Button>
+                )}
 
                 <div className="d-flex gap-2">
                   <Button variant="dark mb-2 mb-md-4" onClick={handleCopyClick}>
@@ -63,6 +102,7 @@ const InvoiceList = () => {
               <Table responsive>
                 <thead>
                   <tr>
+                    {multipleUpdate ? <th>Select</th> : null}
                     <th>Invoice No.</th>
                     <th>Bill To</th>
                     <th>Due Date</th>
@@ -76,6 +116,10 @@ const InvoiceList = () => {
                       key={invoice.id}
                       invoice={invoice}
                       navigate={navigate}
+                      multipleUpdate={multipleUpdate}
+                      setIds={setIds}
+                      ids={ids}
+                      multipleInvoice={multipleInvoice}
                     />
                   ))}
                 </tbody>
@@ -88,7 +132,13 @@ const InvoiceList = () => {
   );
 };
 
-const InvoiceRow = ({ invoice, navigate }) => {
+const InvoiceRow = ({
+  invoice,
+  navigate,
+  multipleUpdate,
+  ids,
+  multipleInvoice,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
 
@@ -111,6 +161,15 @@ const InvoiceRow = ({ invoice, navigate }) => {
 
   return (
     <tr>
+      {multipleUpdate && (
+        <td style={{ width: "5%" }}>
+          <Form.Check
+            type="checkbox"
+            checked={ids.includes(invoice.id)}
+            onClick={() => multipleInvoice(invoice.id)}
+          ></Form.Check>
+        </td>
+      )}
       <td>{invoice.invoiceNumber}</td>
       <td className="fw-normal">{invoice.billTo}</td>
       <td className="fw-normal">{invoice.dateOfIssue}</td>
